@@ -13,14 +13,14 @@ const App = {
 
   async init() {
     try {
-      // Google OAuth geri dönüşünde hash'te access_token olabilir
-      // Supabase bunu kendisi işler ama önce biraz bekleyelim
+      // Implicit OAuth flow: hash'te access_token gelirse Supabase işlesin
       const hash = window.location.hash || '';
       if (hash.includes('access_token') || hash.includes('error_description')) {
-        // OAuth callback: Supabase'in session'ı işlemesini bekle
-        await new Promise(resolve => setTimeout(resolve, 500));
-        // Temiz URL'ye geç
-        window.history.replaceState(null, '', window.location.pathname + '#/');
+        // Supabase'in token'ı işlemesi için bekle
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        // Hash'i temizle, ana sayfaya git
+        window.history.replaceState(null, '', window.location.pathname);
+        window.location.hash = '#/';
       }
 
       await DataStore.init();

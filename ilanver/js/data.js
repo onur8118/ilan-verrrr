@@ -2,10 +2,10 @@ const supabaseUrl = 'https://lnvsbzlpimdfjsgbktdn.supabase.co';
 const supabaseKey = 'sb_publishable_4Y2RtGHTtjf7QJVb7u1aqQ_-oukGAvJ';
 const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey, {
   auth: {
+    flowType: 'implicit',
     autoRefreshToken: true,
     persistSession: true,
-    detectSessionInUrl: true,
-    storageKey: 'ilanver-auth-token'
+    detectSessionInUrl: true
   }
 });
 
