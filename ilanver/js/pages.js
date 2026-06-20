@@ -99,8 +99,13 @@ const Pages = {
                   </div>
                   
                   <div style="font-size:12px; color:var(--text-muted); margin-top:10px;">İlan Sahibi ile İletişime Geçin</div>
-               </div>
-            </div>
+                </div>
+
+                ${DataStore.getUser() && DataStore.getUser().id === listing.userId ? `
+                <button onclick="App.handleDeleteListing('${listing.id}')" style="width:100%; margin-top:15px; padding:12px; background:#FEE2E2; color:#DC2626; border:1px solid #FECACA; border-radius:10px; cursor:pointer; font-weight:700; font-size:14px; transition:all 0.2s;" onmouseover="this.style.background='#FECACA';" onmouseout="this.style.background='#FEE2E2';">
+                  🗑️ Bu İlanı Sil
+                </button>` : ''}
+             </div>
          </div>
       </div>
     `;

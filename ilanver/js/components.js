@@ -5,10 +5,12 @@ const Components = {
     const isMyAd = currentUser && currentUser.id === listing.userId;
     
     return `
-      <div class="product-card" onclick="App.navigate('#/detail/${listing.id}')" style="position:relative;">
+      <div class="product-card" style="position:relative;">
+        <button onclick="event.stopPropagation(); App.navigate('#/detail/${listing.id}')" style="position:absolute; inset:0; width:100%; height:100%; background:transparent; border:none; cursor:pointer; z-index:1;"></button>
         <button onclick="event.stopPropagation(); App.handleToggleFavorite('${listing.id}')" style="position:absolute; top:8px; right:8px; background:var(--surface); border:1px solid var(--border-color); border-radius:50%; width:30px; height:30px; box-shadow:0 2px 4px rgba(0,0,0,0.1); cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center; z-index:10; transition:all 0.2s;" onmouseover="this.style.transform='scale(1.1)';" onmouseout="this.style.transform='scale(1)';">
            ${isFav ? '❤️' : '🤍'}
         </button>
+        ${isMyAd ? `<button onclick="event.stopPropagation(); App.handleDeleteListing('${listing.id}')" style="position:absolute; top:8px; left:8px; background:#EF4444; border:none; border-radius:50%; width:30px; height:30px; box-shadow:0 2px 4px rgba(0,0,0,0.2); cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center; z-index:10; transition:all 0.2s; color:white;" onmouseover="this.style.transform='scale(1.1)';" onmouseout="this.style.transform='scale(1)';" title="İlanı Sil">🗑️</button>` : ''}
         <div class="card-img-box">
           ${listing.image ? `<img src="${listing.image}" alt="Görsel" loading="lazy">` : `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#9CA3AF;font-size:2rem;">📷</div>`}
         </div>

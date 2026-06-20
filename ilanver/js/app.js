@@ -183,13 +183,13 @@ const App = {
   },
 
   async handleDeleteListing(id) {
-    if(confirm('İlanı silmek istediğinize emin misiniz?')) {
+    if(confirm('Bu ilanı silmek istediğinize emin misiniz?')) {
        try {
          await DataStore.deleteListing(id);
-         Components.showToast('İlan silindi.', 'info');
-         this.handleRoute();
+         Components.showToast('İlan başarıyla silindi! ✅', 'success');
+         this.navigate('#/');
        } catch (err) {
-         Components.showToast('İlan silinemedi: Yetkiniz yok veya sunucu hatası.', 'error');
+         Components.showToast('İlan silinemedi. Yetkiniz olmayabilir.', 'error');
        }
     }
   },
