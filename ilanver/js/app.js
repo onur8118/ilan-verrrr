@@ -13,6 +13,16 @@ const App = {
 
   async init() {
     try {
+      // Google OAuth geri dönüşünde hash'te access_token olabilir
+      // Supabase bunu kendisi işler ama önce biraz bekleyelim
+      const hash = window.location.hash || '';
+      if (hash.includes('access_token') || hash.includes('error_description')) {
+        // OAuth callback: Supabase'in session'ı işlemesini bekle
+        await new Promise(resolve => setTimeout(resolve, 500));
+        // Temiz URL'ye geç
+        window.history.replaceState(null, '', window.location.pathname + '#/');
+      }
+
       await DataStore.init();
       
       try {
@@ -107,6 +117,9 @@ const App = {
     const hash = window.location.hash || '#/';
     const parts = hash.replace('#/', '').split('/');
     const page = parts[0] || 'home';
+
+    // Her route değişiminde header'ı güncelle (oturum durumu doğru yansısın)
+    this.updateHeaderUI();
 
     this.currentPage = page;
     let html = '';
