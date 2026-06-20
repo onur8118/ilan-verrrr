@@ -26,6 +26,10 @@ const DataStore = {
          this.currentUser = session ? session.user : null;
          if (typeof App !== 'undefined' && App.updateHeaderUI) {
             App.updateHeaderUI();
+            // Sayfayı yenile (OAuth sonrası yönlendirme için)
+            if (event === 'SIGNED_IN') {
+               App.navigate('#/');
+            }
          }
        });
     } catch (e) {
@@ -84,11 +88,14 @@ const DataStore = {
 
   getUser() {
     if (!this.currentUser) return null;
+    // Google OAuth'ta ad 'full_name', normal kayıtta 'name' olarak gelir
+    const meta = this.currentUser.user_metadata || {};
+    const name = meta.full_name || meta.name || this.currentUser.email?.split('@')[0] || 'Kullanıcı';
     return {
        id: this.currentUser.id,
-       name: this.currentUser.user_metadata?.name || 'Kullanıcı',
-       phone: this.currentUser.user_metadata?.phone || '',
-       city: this.currentUser.user_metadata?.city || '',
+       name: name,
+       phone: meta.phone || '',
+       city: meta.city || '',
        email: this.currentUser.email
     };
   },
