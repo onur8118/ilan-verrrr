@@ -142,7 +142,7 @@ const DataStore = {
   },
 
   async search(query, cityFilter = 'all', categoryFilter = 'all') {
-    let queryBuilder = supabaseClient.from('listings').select('*').order('createdAt', { ascending: false });
+    let queryBuilder = supabaseClient.from('listings').select('*').order('created_at', { ascending: false });
     
     if (cityFilter && cityFilter !== 'all') {
       queryBuilder = queryBuilder.eq('city', cityFilter);
@@ -243,7 +243,7 @@ const DataStore = {
   async getUserListings() {
     const user = this.getUser();
     if (!user) return [];
-    const { data, error } = await supabaseClient.from('listings').select('*').eq('userName', user.name).order('createdAt', { ascending: false });
+    const { data, error } = await supabaseClient.from('listings').select('*').eq('userId', user.id).order('created_at', { ascending: false });
     if(error) console.error(error);
     return data || [];
   }
