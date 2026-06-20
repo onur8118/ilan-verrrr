@@ -19,22 +19,18 @@ const DataStore = {
   async init() {
     return new Promise((resolve) => {
       supabaseClient.auth.onAuthStateChange((event, session) => {
+        console.log('🔵 AUTH EVENT:', event, session ? 'SESSION VAR' : 'SESSION YOK');
         this.currentUser = session ? session.user : null;
 
-        // INITIAL_SESSION: sayfa ilk yüklendiğinde gerçek oturum durumu
         if (event === 'INITIAL_SESSION') {
-          resolve(); // init() tamamlandı, gerçek session bilindi
+          console.log('🟡 INITIAL_SESSION, currentUser:', this.currentUser ? this.currentUser.email : 'null');
+          resolve();
         }
 
-        // Oturum değiştiğinde header'ı güncelle
         if (typeof App !== 'undefined' && App.updateHeaderUI) {
           App.updateHeaderUI();
-          if (event === 'SIGNED_IN') {
-            App.navigate('#/');
-          }
-          if (event === 'SIGNED_OUT') {
-            App.navigate('#/');
-          }
+          if (event === 'SIGNED_IN') App.navigate('#/');
+          if (event === 'SIGNED_OUT') App.navigate('#/');
         }
       });
     });

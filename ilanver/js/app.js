@@ -47,6 +47,7 @@ const App = {
 
   updateHeaderUI() {
     const user = DataStore.getUser();
+    console.log('🟢 updateHeaderUI:', user ? user.email : 'NULL');
     const navMessages = document.getElementById('nav-messages');
     const navFavorites = document.getElementById('nav-favorites');
     const navProfile = document.getElementById('nav-profile');
