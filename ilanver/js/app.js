@@ -26,13 +26,6 @@ const App = {
       await DataStore.init();
       
       try {
-         // Beni Hatırla Logic
-         const rememberMe = localStorage.getItem('ilanver_remember');
-         if (rememberMe === 'false' && !sessionStorage.getItem('ilanver_session_active')) {
-             await DataStore.logout();
-         }
-         sessionStorage.setItem('ilanver_session_active', 'true');
-
          const savedTheme = localStorage.getItem('ilanver_theme');
          if (savedTheme === 'dark') {
             document.documentElement.setAttribute('data-theme', 'dark');

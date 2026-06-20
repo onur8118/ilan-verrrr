@@ -17,25 +17,27 @@ const DataStore = {
   currentUser: null,
 
   async init() {
-    try {
-       const { data, error } = await supabaseClient.auth.getSession();
-       if(error) console.error('Supabase Session Error:', error);
-       this.currentUser = data && data.session ? data.session.user : null;
+    return new Promise((resolve) => {
+      supabaseClient.auth.onAuthStateChange((event, session) => {
+        this.currentUser = session ? session.user : null;
 
-       supabaseClient.auth.onAuthStateChange((event, session) => {
-         this.currentUser = session ? session.user : null;
-         if (typeof App !== 'undefined' && App.updateHeaderUI) {
-            App.updateHeaderUI();
-            // Sayfayı yenile (OAuth sonrası yönlendirme için)
-            if (event === 'SIGNED_IN') {
-               App.navigate('#/');
-            }
-         }
-       });
-    } catch (e) {
-       console.error('DataStore init crashed:', e);
-       this.currentUser = null;
-    }
+        // INITIAL_SESSION: sayfa ilk yüklendiğinde gerçek oturum durumu
+        if (event === 'INITIAL_SESSION') {
+          resolve(); // init() tamamlandı, gerçek session bilindi
+        }
+
+        // Oturum değiştiğinde header'ı güncelle
+        if (typeof App !== 'undefined' && App.updateHeaderUI) {
+          App.updateHeaderUI();
+          if (event === 'SIGNED_IN') {
+            App.navigate('#/');
+          }
+          if (event === 'SIGNED_OUT') {
+            App.navigate('#/');
+          }
+        }
+      });
+    });
   },
 
   async register(email, password, name, phone, city) {
