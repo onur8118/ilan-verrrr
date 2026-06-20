@@ -47,6 +47,7 @@ const App = {
     const navMessages = document.getElementById('nav-messages');
     const navFavorites = document.getElementById('nav-favorites');
     const navProfile = document.getElementById('nav-profile');
+    const navProfileAvatar = document.getElementById('nav-profile-avatar');
     const navCreate = document.getElementById('nav-create');
     const navLogin = document.getElementById('nav-login');
     const navLogout = document.getElementById('nav-logout');
@@ -54,7 +55,16 @@ const App = {
     if (user) {
        if(navMessages) navMessages.style.display = 'flex';
        if(navFavorites) navFavorites.style.display = 'flex';
-       if(navProfile) navProfile.style.display = 'flex';
+       if(navProfile) navProfile.style.display = 'none';
+       if(navProfileAvatar) {
+          navProfileAvatar.style.display = 'flex';
+          const firstLetter = (user.name || user.email || 'U').trim().charAt(0).toUpperCase();
+          navProfileAvatar.textContent = firstLetter;
+          
+          const avatarColors = ['#E11D48', '#BE185D', '#1D4ED8', '#047857', '#B45309', '#7C3AED', '#0369A1', '#4D7C0F'];
+          const colorIndex = firstLetter.charCodeAt(0) % avatarColors.length;
+          navProfileAvatar.style.backgroundColor = avatarColors[colorIndex];
+       }
        if(navCreate) navCreate.style.display = 'inline-block';
        if(navLogin) navLogin.style.display = 'none';
        if(navLogout) navLogout.style.display = 'inline-block';
@@ -62,6 +72,7 @@ const App = {
        if(navMessages) navMessages.style.display = 'none';
        if(navFavorites) navFavorites.style.display = 'none';
        if(navProfile) navProfile.style.display = 'none';
+       if(navProfileAvatar) navProfileAvatar.style.display = 'none';
        if(navCreate) navCreate.style.display = 'none';
        if(navLogin) navLogin.style.display = 'inline-block';
        if(navLogout) navLogout.style.display = 'none';
