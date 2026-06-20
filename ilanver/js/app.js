@@ -18,9 +18,13 @@ const App = {
       if (hash.includes('access_token') || hash.includes('error_description')) {
         // Supabase'in token'ı işlemesi için bekle
         await new Promise(resolve => setTimeout(resolve, 1500));
-        // Hash'i temizle, ana sayfaya git
-        window.history.replaceState(null, '', window.location.pathname);
-        window.location.hash = '#/';
+        // Session'ı doğrudan al ve kaydet
+        const { data } = await supabaseClient.auth.getSession();
+        if (data && data.session) {
+          DataStore.currentUser = data.session.user;
+        }
+        // Hash'i temizle
+        window.history.replaceState(null, '', window.location.pathname + '#/');
       }
 
       await DataStore.init();
@@ -47,7 +51,6 @@ const App = {
 
   updateHeaderUI() {
     const user = DataStore.getUser();
-    console.log('🟢 updateHeaderUI:', user ? user.email : 'NULL');
     const navMessages = document.getElementById('nav-messages');
     const navFavorites = document.getElementById('nav-favorites');
     const navProfile = document.getElementById('nav-profile');
