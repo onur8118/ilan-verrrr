@@ -1,6 +1,13 @@
 const supabaseUrl = 'https://lnvsbzlpimdfjsgbktdn.supabase.co';
 const supabaseKey = 'sb_publishable_4Y2RtGHTtjf7QJVb7u1aqQ_-oukGAvJ';
-const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey, {
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: true,
+    storageKey: 'ilanver-auth-token'
+  }
+});
 
 function normalizeText(text) {
   if (!text) return "";
@@ -63,10 +70,12 @@ const DataStore = {
   },
 
   async loginWithOAuth(provider) {
+    const redirectTo = window.location.origin + '/';
+    console.log('🔵 OAuth redirectTo:', redirectTo);
     const { data, error } = await supabaseClient.auth.signInWithOAuth({
       provider: provider,
       options: {
-        redirectTo: window.location.origin + window.location.pathname
+        redirectTo: redirectTo
       }
     });
     if (error) throw error;
