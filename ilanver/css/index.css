@@ -1,0 +1,100 @@
+:root {
+  /* Renk Paleti - Doğa / Ferah Konsept */
+  --primary: #2A4A41;       /* Koyu Çam Yeşili - Header & Başlıklar */
+  --primary-light: #3A6357;
+  --primary-dark: #1B332B;
+  
+  --secondary: #A3E635;     /* Canlı Açık Yeşil - Butonlar & Vurgular */
+  --secondary-hover: #84CC16;
+  
+  --bg: #EAFAE0;            /* Çok Açık Fıstık Yeşili - Ana Arkaplan */
+  --bg-alt: #FFFFFF;        /* Beyaz - Alternatif Arkaplan */
+  
+  --surface: #FFFFFF;       /* Kartlar ve Yüzeyler */
+  --surface-light: #F9FAF8;
+  
+  --text: #182A24;          /* Çok Koyu Yeşil / Siyah - Ana Metin */
+  --text-inverse: #FFFFFF;  /* Beyaz Metin (Header için) */
+  --text-secondary: #4B5563;
+  --text-muted: #9CA3AF;
+  
+  --success: #10B981;
+  --danger: #EF4444;
+  --warning: #F59E0B;
+  
+  --border: #E5E7EB;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background-color: var(--secondary);
+  color: var(--primary);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--primary-light);
+  border-radius: 4px;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* Animasyonlar */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+
+/* Gradient Text Geçişi */
+.text-gradient {
+  background: linear-gradient(135deg, var(--primary), #10B981);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}

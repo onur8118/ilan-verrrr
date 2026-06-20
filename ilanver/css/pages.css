@@ -1,0 +1,188 @@
+.page-container {
+  padding: 2rem 0;
+}
+
+/* =========================================
+   HERO SECTION (BizimHesap Konsepti)
+========================================= */
+.hero-split {
+  display: flex;
+  min-height: 600px;
+  background-color: var(--bg);
+}
+
+.hero-content {
+  flex: 1;
+  padding: 6rem 4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.hero-subtitle {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--primary);
+  margin-bottom: 1rem;
+}
+
+.hero-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+}
+
+.hero-desc {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  max-width: 500px;
+  margin-bottom: 2.5rem;
+  line-height: 1.6;
+}
+
+.hero-image-wrapper {
+  flex: 1;
+  background: linear-gradient(135deg, var(--primary-light), var(--primary));
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.9;
+}
+
+/* =========================================
+   CATEGORIES GRID
+========================================= */
+.section {
+  padding: 4rem 0;
+  background-color: var(--bg-alt);
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.section-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+}
+
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.category-card {
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 2.5rem;
+  text-align: center;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s;
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--text);
+}
+
+.category-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--secondary);
+}
+
+.category-icon {
+  font-size: 3.5rem;
+  margin-bottom: 1.5rem;
+  display: block;
+}
+
+.category-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+/* =========================================
+   LISTING GRIDS
+========================================= */
+.listings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+/* =========================================
+   CREATE FORM
+========================================= */
+.create-wrapper {
+  max-width: 700px;
+  margin: 0 auto;
+  background: var(--surface);
+  padding: 3rem;
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+.create-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.category-select-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.cat-option {
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cat-option:hover {
+  border-color: var(--primary-light);
+}
+
+.cat-option.selected {
+  border-color: var(--secondary);
+  background: rgba(163, 230, 53, 0.1);
+}
+
+/* =========================================
+   DETAIL PAGE
+========================================= */
+.detail-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  background: var(--surface);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+.detail-hero {
+  width: 100%;
+  height: 400px;
+  background: var(--bg);
+}
+
+.detail-body {
+  padding: 2.5rem;
+}
