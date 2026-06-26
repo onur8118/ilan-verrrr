@@ -7,6 +7,7 @@ const App = {
   searchQuery: '',
   currentCityFilter: 'all',
   currentCategoryFilter: 'all',
+  currentUniversityFilter: 'all',
   currentSort: 'newest',
   selectedImageData: null,
   lastHash: null,
@@ -231,6 +232,11 @@ const App = {
     this.handleRoute();
   },
 
+  handleUniversityFilter(value) {
+    this.currentUniversityFilter = value;
+    this.handleRoute();
+  },
+
   handleImageSelect(input) {
     if (input.files && input.files[0]) {
       const file = input.files[0];
@@ -287,11 +293,12 @@ const App = {
     const category = document.getElementById('ad-category').value;
     const desc = document.getElementById('ad-desc').value;
     const city = document.getElementById('ad-city').value;
+    const university = document.getElementById('ad-university').value;
     const price = document.getElementById('ad-price').value || 0;
     const phone = document.getElementById('ad-phone').value;
 
-    if(!category || !desc || !phone || !city) {
-        Components.showToast('Lütfen Kategori, Açıklama, Şehir ve Telefon alanlarını doldurun.', 'error');
+    if(!category || !desc || !phone || !city || !university) {
+        Components.showToast('Lütfen Kategori, Açıklama, Şehir, Üniversite ve Telefon alanlarını doldurun.', 'error');
         return;
     }
 
@@ -301,10 +308,11 @@ const App = {
 
     try {
        await DataStore.create({
-         image: this.selectedImageData || '', 
+         image: this.selectedImageData || '',
          category: category,
          description: desc,
          city: city,
+         university: university,
          price: price,
          userName: user.name,
          phone: phone,

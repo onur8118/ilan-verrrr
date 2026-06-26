@@ -1,6 +1,6 @@
 const Pages = {
   async renderHome() {
-    let listings = await DataStore.search(App.searchQuery, App.currentCityFilter, App.currentCategoryFilter);
+    let listings = await DataStore.search(App.searchQuery, App.currentCityFilter, App.currentCategoryFilter, App.currentUniversityFilter);
 
     if (App.currentSort === 'price_asc') {
        listings.sort((a, b) => Number(a.price || 0) - Number(b.price || 0));
@@ -42,6 +42,10 @@ const Pages = {
                  <span style="color:var(--text-muted); font-size:13px;">${listings.length} sonuç bulundu</span>
               </div>
               <div style="display:flex; gap:10px;">
+                 <select onchange="App.handleUniversityFilter(this.value)" style="padding:8px 12px; border-radius:8px; border:1px solid var(--border-color); background:var(--surface); color:var(--text-main); outline:none; font-weight:600; cursor:pointer;">
+                    <option value="all" ${App.currentUniversityFilter === 'all' ? 'selected' : ''}>Tüm Üniversiteler</option>
+                    ${StaticData.universities.map(u => `<option value="${u}" ${App.currentUniversityFilter === u ? 'selected' : ''}>${u}</option>`).join('')}
+                 </select>
                  <select onchange="App.handleSortChange(this.value)" style="padding:8px 12px; border-radius:8px; border:1px solid var(--border-color); background:var(--surface); color:var(--text-main); outline:none; font-weight:600; cursor:pointer;">
                     <option value="newest" ${App.currentSort === 'newest' ? 'selected' : ''}>En Yeni</option>
                     <option value="price_asc" ${App.currentSort === 'price_asc' ? 'selected' : ''}>En Ucuz</option>
@@ -84,6 +88,7 @@ const Pages = {
                <div style="border-top:1px solid var(--border-color); border-bottom:1px solid var(--border-color); padding:15px 0; margin-bottom:20px;">
                   <div style="margin-bottom:10px; display:flex; justify-content:space-between;"><span style="color:var(--text-muted);">İlan No</span> <strong>${listing.id}</strong></div>
                   <div style="margin-bottom:10px; display:flex; justify-content:space-between;"><span style="color:var(--text-muted);">Konum</span> <strong>${App.escapeHTML(listing.city)}</strong></div>
+                  ${listing.university ? `<div style="margin-bottom:10px; display:flex; justify-content:space-between;"><span style="color:var(--text-muted);">Üniversite</span> <strong>${App.escapeHTML(listing.university)}</strong></div>` : ''}
                   <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-muted);">Kategori</span> <strong style="color:var(--primary-blue);">${App.escapeHTML(listing.category)}</strong></div>
                </div>
                
@@ -114,6 +119,7 @@ const Pages = {
   async renderCreate() {
     const cityOptions = `<option value="">Şehir Seçiniz</option>` + DataStore.STATIC.cities.map(c => `<option value="${c}">${c}</option>`).join('');
     const catOptions = `<option value="">Kategori Seçiniz</option>` + DataStore.STATIC.categories.map(c => `<option value="${c}">${c}</option>`).join('');
+    const uniOptions = `<option value="">Üniversite Seçiniz</option>` + StaticData.universities.map(u => `<option value="${u}">${u}</option>`).join('');
 
     return `
       <div style="max-width:800px; margin:40px auto; padding:0 20px;">
@@ -150,6 +156,13 @@ const Pages = {
               <div class="input-group">
                  <label class="input-label">İlan Başlığı / Açıklaması</label>
                  <textarea id="ad-desc" class="input-field" style="height:120px; resize:vertical;" placeholder="Ne satıyorsunuz veya ne arıyorsunuz?" maxlength="1000" required></textarea>
+              </div>
+
+              <div class="input-group">
+                 <label class="input-label">Üniversite</label>
+                 <select id="ad-university" class="input-field" required>
+                   ${uniOptions}
+                 </select>
               </div>
 
               <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
