@@ -19,6 +19,7 @@ const Components = {
           <div class="card-footer" style="display:flex; justify-content:space-between; align-items:center;">
             <div>
                <span class="card-location">${App.escapeHTML(listing.city)}</span><br>
+               ${listing.course ? `<span style="font-size:11px; color:var(--text-muted);">📚 ${App.escapeHTML(listing.course)}</span><br>` : ''}
                <span class="card-price" style="font-weight:700; color:var(--primary-blue);">
                   ${(!listing.price || listing.price == 0) ? 'Ücretsiz' : listing.price + ' TL'}
                </span>

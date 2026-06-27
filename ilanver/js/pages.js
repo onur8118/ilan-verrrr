@@ -89,6 +89,7 @@ const Pages = {
                   <div style="margin-bottom:10px; display:flex; justify-content:space-between;"><span style="color:var(--text-muted);">İlan No</span> <strong>${listing.id}</strong></div>
                   <div style="margin-bottom:10px; display:flex; justify-content:space-between;"><span style="color:var(--text-muted);">Konum</span> <strong>${App.escapeHTML(listing.city)}</strong></div>
                   ${listing.university ? `<div style="margin-bottom:10px; display:flex; justify-content:space-between;"><span style="color:var(--text-muted);">Üniversite</span> <strong>${App.escapeHTML(listing.university)}</strong></div>` : ''}
+                  ${listing.course ? `<div style="margin-bottom:10px; display:flex; justify-content:space-between;"><span style="color:var(--text-muted);">Ders</span> <strong>${App.escapeHTML(listing.course)}</strong></div>` : ''}
                   <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-muted);">Kategori</span> <strong style="color:var(--primary-blue);">${App.escapeHTML(listing.category)}</strong></div>
                </div>
                
@@ -131,7 +132,7 @@ const Pages = {
               
               <div class="input-group">
                  <label class="input-label">Kategori</label>
-                 <select id="ad-category" class="input-field" required>
+                 <select id="ad-category" class="input-field" required onchange="App.toggleCourseField(this.value)">
                    ${catOptions}
                  </select>
               </div>
@@ -163,6 +164,11 @@ const Pages = {
                  <select id="ad-university" class="input-field" required>
                    ${uniOptions}
                  </select>
+              </div>
+
+              <div id="course-field-wrapper" class="input-group" style="display:none;">
+                 <label class="input-label">Ders</label>
+                 <input type="text" id="ad-course" class="input-field" placeholder="Ders (örn. Matematik 1)" maxlength="100">
               </div>
 
               <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">

@@ -283,6 +283,15 @@ const App = {
     }
   },
 
+  toggleCourseField(categoryValue) {
+    const wrapper = document.getElementById('course-field-wrapper');
+    const input = document.getElementById('ad-course');
+    if (!wrapper) return;
+    const show = categoryValue === 'Özel Ders' || categoryValue === 'Kampüs/Okul';
+    wrapper.style.display = show ? '' : 'none';
+    if (!show && input) input.value = '';
+  },
+
   async handleCreateSubmit() {
     const user = DataStore.getUser();
     if (!user) {
@@ -309,6 +318,11 @@ const App = {
     }
 
     try {
+       const courseWrapper = document.getElementById('course-field-wrapper');
+       const courseInput = document.getElementById('ad-course');
+       const courseVisible = courseWrapper && courseWrapper.style.display !== 'none';
+       const courseValue = (courseVisible && courseInput && courseInput.value.trim()) ? courseInput.value.trim() : null;
+
        await DataStore.create({
          image: this.selectedImageData || '',
          category: category,
@@ -319,7 +333,8 @@ const App = {
          username: user.name,
          userName: user.name,
          phone: phone,
-         createdat: new Date().toISOString()
+         createdat: new Date().toISOString(),
+         course: courseValue
        });
 
        Components.showToast('İlanınız yayında! 🎉', 'success');
