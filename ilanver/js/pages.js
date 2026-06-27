@@ -101,7 +101,7 @@ const Pages = {
                   
                   <div style="display:flex; gap:10px;">
                      <button class="post-ad-btn" style="flex:1; background:var(--surface); color:var(--text-main); border:1px solid var(--border-color); font-size:14px;" onclick="alert('Telefon: ${App.escapeHTML(listing.phone)}')">📞 Ara</button>
-                     <button class="post-ad-btn" style="flex:1; background:var(--primary-blue); font-size:14px;" onclick="App.navigate('#/messages')">💬 Mesaj At</button>
+                     <button class="post-ad-btn" style="flex:1; background:var(--primary-blue); font-size:14px;" onclick="App.handleOpenChat('${listing.userId}', '${listing.id}')">💬 Mesaj At</button>
                   </div>
                   
                   <div style="font-size:12px; color:var(--text-muted); margin-top:10px;">İlan Sahibi ile İletişime Geçin</div>
@@ -361,58 +361,87 @@ const Pages = {
 
     const convos = await DataStore.getConversations();
     const activeChatId = App.activeChatUserId || null;
-    let messagesHTML = '<div style="flex:1; display:flex; align-items:center; justify-content:center; color:var(--text-muted);">Sol taraftan bir sohbet seçin.</div>';
+    const activeConvo = convos.find(c => c.userId === activeChatId);
+    const activeName = (activeConvo && activeConvo.otherUserName) ? activeConvo.otherUserName : 'Mesajlaşma';
+    let messagesHTML = `
+      <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; background:var(--bg-color); color:var(--text-muted);">
+        <div style="font-size:2.8rem;">💬</div>
+        <div style="font-size:15px; font-weight:600;">Bir sohbet seçin</div>
+        <div style="font-size:13px; opacity:0.65;">Soldaki listeden kişi seçerek mesajlaşmaya başlayın.</div>
+      </div>
+    `;
 
     if (activeChatId) {
        const msgs = await DataStore.getMessages(activeChatId);
+       const headerInitial = activeName.charAt(0).toUpperCase();
        messagesHTML = `
           <div style="flex:1; display:flex; flex-direction:column; background:var(--bg-color);">
+
              <!-- Chat Header -->
-             <div style="padding:15px; border-bottom:1px solid var(--border-color); background:var(--surface); display:flex; align-items:center; justify-content:space-between;">
-                <div style="font-weight:bold; color:var(--text-main);">Mesajlaşma</div>
-                <button onclick="App.activeChatUserId = null; App.handleRoute();" style="background:transparent; border:none; color:var(--text-muted); cursor:pointer; font-size:18px;">✖</button>
+             <div style="padding:14px 20px; border-bottom:1px solid var(--border-color); background:var(--surface); display:flex; align-items:center; justify-content:space-between; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+                <div style="display:flex; align-items:center; gap:12px;">
+                   <div style="width:40px; height:40px; background:#2563eb; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; color:white; font-size:16px; flex-shrink:0;">${headerInitial}</div>
+                   <div style="font-weight:700; font-size:15px; color:var(--text-main);">${App.escapeHTML(activeName)}</div>
+                </div>
+                <button onclick="App.activeChatUserId = null; App.handleRoute();" style="background:transparent; border:none; color:var(--text-muted); cursor:pointer; font-size:18px; width:32px; height:32px; border-radius:6px; display:flex; align-items:center; justify-content:center; transition:background 0.15s;" onmouseover="this.style.background='var(--bg-color)';" onmouseout="this.style.background='transparent';">✕</button>
              </div>
-             
+
              <!-- Messages Area -->
-             <div id="chat-messages-container" style="flex:1; overflow-y:auto; padding:20px; display:flex; flex-direction:column; gap:10px;">
-                ${msgs.length === 0 ? '<div style="text-align:center; color:var(--text-muted); margin-top:20px;">İlk mesajı gönderin!</div>' : ''}
+             <div id="chat-messages-container" style="flex:1; overflow-y:auto; padding:20px 24px; display:flex; flex-direction:column; gap:4px;">
+                ${msgs.length === 0 ? `
+                  <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; color:var(--text-muted);">
+                    <div style="font-size:2rem;">👋</div>
+                    <div style="font-size:14px; font-weight:500;">İlk mesajı siz gönderin!</div>
+                  </div>
+                ` : ''}
                 ${msgs.map(m => {
                    const isMe = m.sender_id === user.id;
                    return `
-                      <div style="display:flex; justify-content:${isMe ? 'flex-end' : 'flex-start'};">
-                         <div style="max-width:70%; padding:10px 15px; border-radius:15px; background:${isMe ? 'var(--primary-blue)' : 'var(--surface)'}; color:${isMe ? 'white' : 'var(--text-main)'}; border:${isMe ? 'none' : '1px solid var(--border-color)'};">
-                            ${App.escapeHTML(m.content)}
-                            <div style="font-size:10px; text-align:right; margin-top:5px; opacity:0.7;">${new Date(m.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                      <div style="display:flex; justify-content:${isMe ? 'flex-end' : 'flex-start'}; margin-bottom:2px;">
+                         <div style="max-width:68%; padding:10px 14px; border-radius:${isMe ? '18px 18px 4px 18px' : '18px 18px 18px 4px'}; background:${isMe ? '#2563eb' : '#f1f5f9'}; color:${isMe ? '#ffffff' : 'var(--text-main)'}; font-size:14px; line-height:1.5; box-shadow:0 1px 2px rgba(0,0,0,0.07);">
+                            <div>${App.escapeHTML(m.content)}</div>
+                            <div style="font-size:10px; text-align:right; margin-top:4px; opacity:0.6;">${new Date(m.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
                          </div>
                       </div>
                    `;
                 }).join('')}
              </div>
-             
+
              <!-- Input Area -->
-             <div style="padding:15px; border-top:1px solid var(--border-color); background:var(--surface); display:flex; gap:10px;">
-                <input type="text" id="chat-input" placeholder="Mesajınızı yazın..." style="flex:1; padding:10px 15px; border-radius:20px; border:1px solid var(--border-color); background:var(--bg-color); color:var(--text-main); outline:none;" onkeypress="if(event.key === 'Enter') App.handleSendMessage('${activeChatId}')">
-                <button onclick="App.handleSendMessage('${activeChatId}')" style="background:var(--primary-blue); color:white; border:none; width:40px; height:40px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center;">➤</button>
+             <div style="padding:14px 20px; border-top:1px solid var(--border-color); background:var(--surface); display:flex; gap:10px; align-items:center;">
+                <input type="text" id="chat-input" placeholder="Mesajınızı yazın..." style="flex:1; padding:11px 18px; border-radius:24px; border:1.5px solid var(--border-color); background:var(--bg-color); color:var(--text-main); outline:none; font-size:14px; transition:border-color 0.2s;" onfocus="this.style.borderColor='#2563eb';" onblur="this.style.borderColor='var(--border-color)';" onkeypress="if(event.key === 'Enter') App.handleSendMessage('${activeChatId}')">
+                <button onclick="App.handleSendMessage('${activeChatId}')" style="background:#2563eb; color:white; border:none; width:44px; height:44px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; box-shadow:0 2px 8px rgba(37,99,235,0.35); transition:transform 0.15s, box-shadow 0.15s;" onmouseover="this.style.transform='scale(1.08)'; this.style.boxShadow='0 4px 12px rgba(37,99,235,0.45)';" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 2px 8px rgba(37,99,235,0.35)';">➤</button>
              </div>
+
           </div>
        `;
     }
 
     return `
-      <div class="main-layout" style="display:flex; height:calc(100vh - 120px); max-width:1200px; margin:0 auto; border:1px solid var(--border-color); border-radius:12px; overflow:hidden; background:var(--surface);">
+      <div class="main-layout" style="display:flex; height:calc(100vh - 120px); max-width:1200px; margin:0 auto; border:1px solid var(--border-color); border-radius:16px; overflow:hidden; background:var(--surface); box-shadow:0 4px 24px rgba(0,0,0,0.07);">
+
          <!-- Sol Taraf: Sohbetler -->
-         <div style="width:300px; background:var(--surface); border-right:1px solid var(--border-color); display:flex; flex-direction:column;">
-            <div style="padding:20px; border-bottom:1px solid var(--border-color); font-weight:bold; font-size:18px; color:var(--text-main);">Mesajlarım</div>
-            <div style="flex:1; overflow-y:auto; padding:10px;">
-               ${convos.length === 0 ? '<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">Henüz mesajınız yok.</div>' : ''}
-               ${convos.map(c => `
-                  <div onclick="App.activeChatUserId = '${c.userId}'; App.activeChatListingId = '${c.listingId}'; App.handleRoute();" style="padding:15px; border-radius:8px; cursor:pointer; margin-bottom:5px; background:${activeChatId === c.userId ? 'rgba(0,102,255,0.1)' : 'transparent'}; border:${activeChatId === c.userId ? '1px solid var(--primary-blue)' : '1px solid transparent'}; transition:background 0.2s;" onmouseover="this.style.background='rgba(0,102,255,0.05)';" onmouseout="this.style.background='${activeChatId === c.userId ? 'rgba(0,102,255,0.1)' : 'transparent'}';">
-                     <div style="font-weight:bold; color:var(--text-main); margin-bottom:4px; font-size:14px;">${App.escapeHTML(c.listingTitle || 'İlan Görüşmesi')}</div>
-                     <div style="font-size:13px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${App.escapeHTML(c.lastMessage)}</div>
+         <div style="width:300px; background:var(--surface); border-right:1px solid var(--border-color); display:flex; flex-direction:column; flex-shrink:0;">
+            <div style="padding:18px 20px; border-bottom:1px solid var(--border-color); font-weight:700; font-size:17px; color:var(--text-main);">Mesajlarım</div>
+            <div style="flex:1; overflow-y:auto; padding:8px;">
+               ${convos.length === 0 ? '<div style="text-align:center; padding:30px 16px; color:var(--text-muted); font-size:14px;">Henüz mesajınız yok.</div>' : ''}
+               ${convos.map(c => {
+                  const isActive = activeChatId === c.userId;
+                  const initial = (c.otherUserName || '?').charAt(0).toUpperCase();
+                  return `
+                  <div onclick="App.activeChatUserId = '${c.userId}'; App.activeChatListingId = '${c.listingId}'; App.handleRoute();" style="display:flex; gap:12px; align-items:center; padding:11px 12px; border-radius:10px; cursor:pointer; margin-bottom:2px; background:${isActive ? 'rgba(37,99,235,0.09)' : 'transparent'}; border:${isActive ? '1px solid rgba(37,99,235,0.18)' : '1px solid transparent'}; transition:background 0.15s;" onmouseover="this.style.background='${isActive ? 'rgba(37,99,235,0.09)' : 'rgba(0,0,0,0.04)'}';" onmouseout="this.style.background='${isActive ? 'rgba(37,99,235,0.09)' : 'transparent'}';">
+                     <div style="width:44px; height:44px; background:#2563eb; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; color:white; font-size:17px; flex-shrink:0;">${initial}</div>
+                     <div style="flex:1; min-width:0;">
+                        <div style="font-weight:600; font-size:14px; color:var(--text-main); margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${App.escapeHTML(c.otherUserName || 'Kullanıcı')}</div>
+                        ${c.listingTitle ? `<div style="font-size:11px; color:#2563eb; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${App.escapeHTML(c.listingTitle)}</div>` : ''}
+                        <div style="font-size:12px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${App.escapeHTML(c.lastMessage)}</div>
+                     </div>
                   </div>
-               `).join('')}
+                  `;
+               }).join('')}
             </div>
          </div>
+
          <!-- Sağ Taraf: Chat Ekranı -->
          ${messagesHTML}
       </div>

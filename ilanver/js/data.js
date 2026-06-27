@@ -446,14 +446,14 @@ const DataStore = {
   async getConversations() {
     const user = this.getUser();
     if (!user) return [];
-    
+
     const { data, error } = await supabaseClient.from('messages')
       .select('sender_id, receiver_id, content, created_at, listing_id')
       .or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`)
       .order('created_at', { ascending: false });
-      
+
     if (error) { console.error(error); return []; }
-    
+
     const convos = new Map();
     data.forEach(msg => {
       const otherId = msg.sender_id === user.id ? msg.receiver_id : msg.sender_id;
@@ -466,7 +466,33 @@ const DataStore = {
         });
       }
     });
-    return Array.from(convos.values());
+
+    const convoList = Array.from(convos.values());
+    if (convoList.length === 0) return convoList;
+
+    // Batch: listing başlıkları + karşı taraf adları (2 paralel sorgu, N+1 yok)
+    const listingIds = [...new Set(convoList.map(c => c.listingId).filter(Boolean))];
+    const otherUserIds = [...new Set(convoList.map(c => c.userId))];
+
+    const [listingsRes, namesRes] = await Promise.all([
+      listingIds.length > 0
+        ? supabaseClient.from('listings').select('id, description').in('id', listingIds)
+        : Promise.resolve({ data: [] }),
+      supabaseClient.from('listings').select('userId, userName, username').in('userId', otherUserIds)
+    ]);
+
+    const listingMap = new Map((listingsRes.data || []).map(l => [l.id, l.description]));
+    const nameMap = new Map();
+    (namesRes.data || []).forEach(l => {
+      if (!nameMap.has(l.userId)) nameMap.set(l.userId, l.userName || l.username || null);
+    });
+
+    convoList.forEach(c => {
+      c.listingTitle = listingMap.get(c.listingId) || null;
+      c.otherUserName = nameMap.get(c.userId) || null;
+    });
+
+    return convoList;
   },
 
   async getUserListings() {
