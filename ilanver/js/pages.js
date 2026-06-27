@@ -23,20 +23,32 @@ const Pages = {
            
            <div class="info-banner">
               <div>
-                 <h2 style="font-size:22px; font-weight:700; margin-bottom:5px;">Kampüste aradığın her şey burada!</h2>
-                 <p style="color:var(--text-muted); font-size:14px;">İkinci el eşyadan özel derse, ev arkadaşından yolculuğa kadar tüm ilanları incele.</p>
+                 <h2 style="font-size:22px; font-weight:700; margin-bottom:4px; color:white;">Kampüste aradığın her şey burada!</h2>
+                 <p style="color:rgba(255,255,255,0.75); font-size:14px;">İkinci el eşyadan özel derse, ev arkadaşından yolculuğa kadar tüm ilanları incele.</p>
               </div>
-              <button onclick="App.navigate('#/create')" class="post-ad-btn" style="background:#4B5563; color:white; padding:12px 24px;">Hemen İlan Ver</button>
+              <button onclick="App.navigate('#/create')" class="post-ad-btn" style="background:white; color:var(--primary-blue); box-shadow:none; flex-shrink:0;">Hemen İlan Ver</button>
+           </div>
+
+           <!-- Filtre pill'leri -->
+           <div class="filter-pills">
+             <button class="filter-pill ${App.currentCategoryFilter === 'all' ? 'active' : ''}" onclick="App.handleCategoryFilter('all')">Tümü</button>
+             <button class="filter-pill ${App.currentCategoryFilter === 'Özel Ders' ? 'active' : ''}" onclick="App.handleCategoryFilter('Özel Ders')">📚 Özel Ders</button>
+             <button class="filter-pill ${App.currentCategoryFilter === 'Eşya Satışı' ? 'active' : ''}" onclick="App.handleCategoryFilter('Eşya Satışı')">🛋️ İkinci El</button>
+             <button class="filter-pill ${App.currentCategoryFilter === 'Emlak' ? 'active' : ''}" onclick="App.handleCategoryFilter('Emlak')">🏢 Emlak</button>
+             <button class="filter-pill ${App.currentCategoryFilter === 'Ev/Ev Arkadaşı' ? 'active' : ''}" onclick="App.handleCategoryFilter('Ev/Ev Arkadaşı')">🛏️ Ev Arkadaşı</button>
+             <button class="filter-pill ${App.currentCategoryFilter === 'Hizmet/Yetenek' ? 'active' : ''}" onclick="App.handleCategoryFilter('Hizmet/Yetenek')">🤝 Hizmetler</button>
+             <button class="filter-pill ${App.currentCategoryFilter === 'Vasıta' ? 'active' : ''}" onclick="App.handleCategoryFilter('Vasıta')">🚗 Vasıta</button>
+             <button class="filter-pill ${App.currentCategoryFilter === 'Sosyal/Etkinlik' ? 'active' : ''}" onclick="App.handleCategoryFilter('Sosyal/Etkinlik')">☕ Sosyal</button>
            </div>
 
            <div class="grid-header" style="display:flex; justify-content:space-between; align-items:center;">
               <div>
                  <div class="grid-title">
-                   ${App.searchQuery 
-                      ? `"<span style="color:var(--primary-blue);">${App.escapeHTML(App.searchQuery)}</span>" için sonuçlar` 
+                   ${App.searchQuery
+                      ? `"<span style="color:var(--primary-blue);">${App.escapeHTML(App.searchQuery)}</span>" için sonuçlar`
                       : (App.currentCategoryFilter === 'all' ? 'Öne Çıkan İlanlar' : App.currentCategoryFilter + ' İlanları')}
-                   ${App.currentCityFilter !== 'all' 
-                      ? `<span style="font-size:13px; color:var(--text-muted); margin-left:10px; background:var(--bg-color); padding:4px 10px; border-radius:12px; border:1px solid var(--border-color); cursor:pointer; font-weight:500;" onclick="App.handleCityFilter('all')" title="Şehir Filtresini Temizle">📍 ${App.escapeHTML(App.currentCityFilter)} ✖</span>` 
+                   ${App.currentCityFilter !== 'all'
+                      ? `<span style="font-size:13px; color:var(--text-muted); margin-left:10px; background:var(--bg-color); padding:4px 10px; border-radius:12px; border:1px solid var(--border-color); cursor:pointer; font-weight:500;" onclick="App.handleCityFilter('all')" title="Şehir Filtresini Temizle">📍 ${App.escapeHTML(App.currentCityFilter)} ✖</span>`
                       : ''}
                  </div>
                  <span style="color:var(--text-muted); font-size:13px;">${listings.length} sonuç bulundu</span>
@@ -55,7 +67,14 @@ const Pages = {
            </div>
 
            <div class="cards-grid">
-             ${listings.length === 0 ? `<div style="grid-column:1/-1; text-align:center; padding:50px; color:var(--text-muted); background:var(--surface); border:1px solid var(--border-color); border-radius:12px;">Henüz hiç ilan verilmemiş. İlk ilanı veren sen ol!</div>` : ''}
+             ${listings.length === 0 ? `
+               <div class="empty-state">
+                 <div style="font-size:3.5rem; margin-bottom:16px;">📭</div>
+                 <h3 style="font-size:18px; font-weight:700; color:var(--text-main); margin-bottom:8px;">Henüz ilan yok</h3>
+                 <p style="color:var(--text-muted); font-size:14px; margin-bottom:24px; max-width:320px; margin-left:auto; margin-right:auto;">Bu kategoride henüz ilan bulunmuyor. İlk ilanı veren sen ol ve binlerce öğrenciye ulaş!</p>
+                 <button onclick="App.navigate('#/create')" class="post-ad-btn">Hemen İlan Ver</button>
+               </div>
+             ` : ''}
              ${listings.map(l => Components.renderShowcaseCard(l, favIds)).join('')}
            </div>
         </main>
