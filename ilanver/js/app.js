@@ -303,8 +303,10 @@ const App = {
     }
 
     const submitBtn = document.getElementById('submit-ad-btn');
-    submitBtn.innerText = 'Yükleniyor...';
-    submitBtn.disabled = true;
+    if (submitBtn) {
+      submitBtn.innerText = 'Yükleniyor...';
+      submitBtn.disabled = true;
+    }
 
     try {
        await DataStore.create({
@@ -314,17 +316,20 @@ const App = {
          city: city,
          university: university,
          price: price,
+         username: user.name,
          userName: user.name,
          phone: phone,
-         createdAt: new Date().toISOString()
+         createdat: new Date().toISOString()
        });
-       
+
        Components.showToast('İlanınız yayında! 🎉', 'success');
        this.navigate('#/profile');
     } catch (error) {
        Components.showToast('İlan yüklenirken hata oluştu.', 'error');
-       submitBtn.innerText = 'İlanı Yayınla';
-       submitBtn.disabled = false;
+       if (submitBtn) {
+         submitBtn.innerText = 'İlanı Yayınla';
+         submitBtn.disabled = false;
+       }
     }
   },
 

@@ -7,7 +7,7 @@ const Pages = {
     } else if (App.currentSort === 'price_desc') {
        listings.sort((a, b) => Number(b.price || 0) - Number(a.price || 0));
     } else {
-       listings.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+       listings.sort((a, b) => new Date(b.createdat) - new Date(a.createdat));
     }
 
     const favIds = await DataStore.getFavorites();
@@ -117,8 +117,8 @@ const Pages = {
   },
 
   async renderCreate() {
-    const cityOptions = `<option value="">Şehir Seçiniz</option>` + DataStore.STATIC.cities.map(c => `<option value="${c}">${c}</option>`).join('');
-    const catOptions = `<option value="">Kategori Seçiniz</option>` + DataStore.STATIC.categories.map(c => `<option value="${c}">${c}</option>`).join('');
+    const cityOptions = `<option value="">Şehir Seçiniz</option>` + StaticData.cities.map(c => `<option value="${c}">${c}</option>`).join('');
+    const catOptions = `<option value="">Kategori Seçiniz</option>` + StaticData.categories.map(c => `<option value="${c}">${c}</option>`).join('');
     const uniOptions = `<option value="">Üniversite Seçiniz</option>` + StaticData.universities.map(u => `<option value="${u}">${u}</option>`).join('');
 
     return `
@@ -181,7 +181,7 @@ const Pages = {
 
               <div style="margin-top:20px; padding-top:20px; border-top:1px solid var(--border-color); display:flex; justify-content:flex-end; gap:15px;">
                 <button type="button" class="link-btn" style="border:none; background:transparent; padding:10px 20px; cursor:pointer;" onclick="window.history.back()">İptal</button>
-                <button type="submit" class="post-ad-btn" style="background:var(--primary-blue); padding:10px 30px;">İlanı Yayınla</button>
+                <button type="submit" id="submit-ad-btn" class="post-ad-btn" style="background:var(--primary-blue); padding:10px 30px;">İlanı Yayınla</button>
               </div>
 
             </form>
