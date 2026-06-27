@@ -462,9 +462,72 @@ const App = {
       await DataStore.logout();
       Components.showToast('Çıkış yapıldı.', 'info');
       this.updateHeaderUI();
-      this.navigate('#/');
+      this.navigate('#/login');
     } catch (err) {
       Components.showToast('Çıkış yapılırken hata oluştu.', 'error');
+    }
+  },
+
+  selectedRating: 0,
+
+  async handleOpenRatingPanel(ratedUserId, listingId) {
+    const panel = document.getElementById('rating-panel-' + listingId);
+    if (!panel) return;
+    if (panel.style.display !== 'none') {
+      panel.style.display = 'none';
+      return;
+    }
+    const existing = await DataStore.getMyRatingFor(ratedUserId);
+    this.selectedRating = existing ? existing.stars : 0;
+    this.updateRatingStars(this.selectedRating);
+    const commentEl = document.getElementById('rating-comment');
+    if (commentEl) commentEl.value = (existing && existing.comment) ? existing.comment : '';
+    panel.style.display = 'block';
+  },
+
+  handleRatingStar(n) {
+    this.selectedRating = n;
+    this.updateRatingStars(n);
+  },
+
+  updateRatingStars(n) {
+    for (let i = 1; i <= 5; i++) {
+      const el = document.getElementById('rstar-' + i);
+      if (el) el.textContent = i <= n ? '⭐' : '☆';
+    }
+  },
+
+  async handleSubmitRating(ratedUserId, listingId) {
+    if (!this.selectedRating || this.selectedRating < 1) {
+      Components.showToast('Lütfen bir yıldız seçin.', 'error');
+      return;
+    }
+    const commentEl = document.getElementById('rating-comment');
+    const comment = commentEl ? commentEl.value.trim() : '';
+
+    const result = await DataStore.submitRating(ratedUserId, this.selectedRating, comment);
+
+    if (result.success) {
+      Components.showToast('Değerlendirmeniz kaydedildi!', 'success');
+      const panel = document.getElementById('rating-panel-' + listingId);
+      if (panel) panel.style.display = 'none';
+      const summary = await DataStore.getUserRatingSummary(ratedUserId);
+      const summaryEl = document.getElementById('rating-summary-' + listingId);
+      if (summaryEl) {
+        summaryEl.style.color = summary.count > 0 ? '#f59e0b' : 'var(--text-muted)';
+        summaryEl.innerHTML = summary.count > 0
+          ? `⭐ ${summary.average.toFixed(1)} <span style="color:var(--text-muted);">(${summary.count} değerlendirme)</span>`
+          : 'Henüz değerlendirilmemiş';
+      }
+    } else {
+      const msg = result.error || '';
+      const isRLS = /policy|rls|permission|violat|denied/i.test(msg);
+      Components.showToast(
+        isRLS
+          ? 'Bu kullanıcıyı değerlendirmek için önce onunla mesajlaşmış olmalısınız.'
+          : 'Değerlendirme kaydedilemedi. Lütfen tekrar deneyin.',
+        'error'
+      );
     }
   },
 

@@ -99,7 +99,7 @@ const Pages = {
                      ${listing.userName ? listing.userName.charAt(0) : '?'}
                   </div>
                   <div style="font-weight:700; font-size:16px; margin-bottom:6px;">${App.escapeHTML(listing.userName)}</div>
-                  <div style="font-size:13px; margin-bottom:15px; color:${ratingSummary.count > 0 ? '#f59e0b' : 'var(--text-muted)'};">
+                  <div id="rating-summary-${listing.id}" style="font-size:13px; margin-bottom:15px; color:${ratingSummary.count > 0 ? '#f59e0b' : 'var(--text-muted)'};">
                     ${ratingSummary.count > 0
                       ? `⭐ ${ratingSummary.average.toFixed(1)} <span style="color:var(--text-muted);">(${ratingSummary.count} değerlendirme)</span>`
                       : 'Henüz değerlendirilmemiş'}
@@ -111,6 +111,23 @@ const Pages = {
                   </div>
                   
                   <div style="font-size:12px; color:var(--text-muted); margin-top:10px;">İlan Sahibi ile İletişime Geçin</div>
+
+                  ${(DataStore.getUser() && DataStore.getUser().id !== listing.userId) ? `
+                  <button onclick="App.handleOpenRatingPanel('${listing.userId}', '${listing.id}')" style="width:100%; margin-top:12px; padding:9px; background:transparent; color:#f59e0b; border:1.5px solid #f59e0b; border-radius:8px; cursor:pointer; font-weight:600; font-size:13px; transition:all 0.2s;" onmouseover="this.style.background='#fef3c7';" onmouseout="this.style.background='transparent';">⭐ Değerlendir</button>
+
+                  <div id="rating-panel-${listing.id}" style="display:none; margin-top:12px; text-align:left; border-top:1px solid var(--border-color); padding-top:12px;">
+                    <div style="font-weight:600; font-size:13px; color:var(--text-main); margin-bottom:10px;">Satıcıyı Değerlendir</div>
+                    <div style="display:flex; gap:4px; justify-content:center; margin-bottom:12px;">
+                      <span id="rstar-1" onclick="App.handleRatingStar(1)" style="font-size:28px; cursor:pointer; transition:transform 0.1s;" onmouseover="this.style.transform='scale(1.2)';" onmouseout="this.style.transform='scale(1)';">☆</span>
+                      <span id="rstar-2" onclick="App.handleRatingStar(2)" style="font-size:28px; cursor:pointer; transition:transform 0.1s;" onmouseover="this.style.transform='scale(1.2)';" onmouseout="this.style.transform='scale(1)';">☆</span>
+                      <span id="rstar-3" onclick="App.handleRatingStar(3)" style="font-size:28px; cursor:pointer; transition:transform 0.1s;" onmouseover="this.style.transform='scale(1.2)';" onmouseout="this.style.transform='scale(1)';">☆</span>
+                      <span id="rstar-4" onclick="App.handleRatingStar(4)" style="font-size:28px; cursor:pointer; transition:transform 0.1s;" onmouseover="this.style.transform='scale(1.2)';" onmouseout="this.style.transform='scale(1)';">☆</span>
+                      <span id="rstar-5" onclick="App.handleRatingStar(5)" style="font-size:28px; cursor:pointer; transition:transform 0.1s;" onmouseover="this.style.transform='scale(1.2)';" onmouseout="this.style.transform='scale(1)';">☆</span>
+                    </div>
+                    <textarea id="rating-comment" placeholder="Yorumunuz (opsiyonel) — örn. hızlı ve güvenilirdi" maxlength="500" style="width:100%; box-sizing:border-box; padding:10px 12px; border:1.5px solid var(--border-color); border-radius:8px; background:var(--bg-color); color:var(--text-main); font-size:13px; resize:vertical; min-height:70px; outline:none; transition:border-color 0.2s;" onfocus="this.style.borderColor='#2563eb';" onblur="this.style.borderColor='var(--border-color)';"></textarea>
+                    <button onclick="App.handleSubmitRating('${listing.userId}', '${listing.id}')" style="width:100%; margin-top:10px; padding:10px; background:#2563eb; color:white; border:none; border-radius:8px; cursor:pointer; font-weight:600; font-size:13px; transition:opacity 0.2s;" onmouseover="this.style.opacity='0.88';" onmouseout="this.style.opacity='1';">Gönder</button>
+                  </div>
+                  ` : ''}
                 </div>
 
                 ${DataStore.getUser() && DataStore.getUser().id === listing.userId ? `

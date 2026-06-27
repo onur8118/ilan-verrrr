@@ -253,7 +253,7 @@ const DataStore = {
         if (typeof App !== 'undefined' && App.updateHeaderUI) {
           App.updateHeaderUI();
           if (event === 'SIGNED_IN') App.navigate('#/');
-          if (event === 'SIGNED_OUT') App.navigate('#/');
+          if (event === 'SIGNED_OUT') App.navigate('#/login');
         }
       });
     });
@@ -526,5 +526,38 @@ const DataStore = {
       average: Math.round((total / ratings.length) * 10) / 10,
       count: ratings.length
     };
+  },
+
+  async submitRating(ratedUserId, stars, comment) {
+    const user = this.getUser();
+    if (!user) return { success: false, error: 'Giriş yapılmamış' };
+    try {
+      const { error } = await supabaseClient.from('ratings').upsert(
+        [{ rater_id: user.id, rated_user_id: ratedUserId, stars: stars, comment: comment || null }],
+        { onConflict: 'rater_id,rated_user_id' }
+      );
+      if (error) { console.error(error); return { success: false, error: error.message }; }
+      return { success: true };
+    } catch (err) {
+      console.error(err);
+      return { success: false, error: err.message };
+    }
+  },
+
+  async getMyRatingFor(ratedUserId) {
+    const user = this.getUser();
+    if (!user) return null;
+    try {
+      const { data, error } = await supabaseClient
+        .from('ratings')
+        .select('stars, comment')
+        .eq('rater_id', user.id)
+        .eq('rated_user_id', ratedUserId)
+        .single();
+      if (error) return null;
+      return data || null;
+    } catch (err) {
+      return null;
+    }
   }
 };
