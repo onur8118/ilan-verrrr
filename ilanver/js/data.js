@@ -501,5 +501,30 @@ const DataStore = {
     const { data, error } = await supabaseClient.from('listings').select('*').eq('userId', user.id).order('createdat', { ascending: false });
     if(error) console.error(error);
     return data || [];
+  },
+
+  async getUserRatings(userId) {
+    try {
+      const { data, error } = await supabaseClient
+        .from('ratings')
+        .select('stars, comment, created_at, rater_id')
+        .eq('rated_user_id', userId)
+        .order('created_at', { ascending: false });
+      if (error) { console.error(error); return []; }
+      return data || [];
+    } catch (err) {
+      console.error(err);
+      return [];
+    }
+  },
+
+  async getUserRatingSummary(userId) {
+    const ratings = await this.getUserRatings(userId);
+    if (ratings.length === 0) return { average: 0, count: 0 };
+    const total = ratings.reduce((sum, r) => sum + r.stars, 0);
+    return {
+      average: Math.round((total / ratings.length) * 10) / 10,
+      count: ratings.length
+    };
   }
 };

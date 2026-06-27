@@ -66,6 +66,7 @@ const Pages = {
   async renderDetail(id) {
     const listing = await DataStore.getById(id);
     if(!listing) return `<div class="main-layout"><div class="form-container" style="width:100%; text-align:center;">İlan bulunamadı.</div></div>`;
+    const ratingSummary = await DataStore.getUserRatingSummary(listing.userId);
     
     return `
       <div class="main-layout" style="display:block; max-width:1000px;">
@@ -97,7 +98,12 @@ const Pages = {
                   <div style="width:60px; height:60px; background:white; border-radius:50%; margin:0 auto 10px auto; display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:700; color:var(--primary-blue); border:1px solid var(--border-color);">
                      ${listing.userName ? listing.userName.charAt(0) : '?'}
                   </div>
-                  <div style="font-weight:700; font-size:16px; margin-bottom:15px;">${App.escapeHTML(listing.userName)}</div>
+                  <div style="font-weight:700; font-size:16px; margin-bottom:6px;">${App.escapeHTML(listing.userName)}</div>
+                  <div style="font-size:13px; margin-bottom:15px; color:${ratingSummary.count > 0 ? '#f59e0b' : 'var(--text-muted)'};">
+                    ${ratingSummary.count > 0
+                      ? `⭐ ${ratingSummary.average.toFixed(1)} <span style="color:var(--text-muted);">(${ratingSummary.count} değerlendirme)</span>`
+                      : 'Henüz değerlendirilmemiş'}
+                  </div>
                   
                   <div style="display:flex; gap:10px;">
                      <button class="post-ad-btn" style="flex:1; background:var(--surface); color:var(--text-main); border:1px solid var(--border-color); font-size:14px;" onclick="alert('Telefon: ${App.escapeHTML(listing.phone)}')">📞 Ara</button>
